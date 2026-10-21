@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('user', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->string('cpf', 11)->nullable();
             $table->string('phone', 20)->nullable();
             $table->enum('role', ['patient', 'admin'])->default('patient');
