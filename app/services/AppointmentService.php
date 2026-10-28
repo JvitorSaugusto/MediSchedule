@@ -3,24 +3,22 @@
 
 class AppointmentService
 {
-    public function schedule(AppointmentRequest $request): RedirectResponse
+    public function schedule(array $data, int$patientId)
     {
-        $existingAppointment = Appointment::where('appointment_date', $request->appointment_date)
-            ->where(function ($query) {
-                $query->where('patient_id', Auth::id());
-            })
+        $existingAppointment = Appointment::where('appointment_date',$data['appointment_date'])
+            ->where('patient_id', \$patientId)
             ->exists();
 
-        if $existingAppointment {
-            ->route('appointment.create')
-            ->with('error', 'Já existe um agendamento nesse horário!!')
+        // 2. Se existir, o Service "grita" um erro (Exception). Ele não redireciona!
+        if (\$existingAppointment) {
+            throw new Exception('Já existe um agendamento nesse horário!!');
         }
 
-        Appointment::create($request->validated());
+        // 3. Adiciona o patient_id no array de dados antes de criar
+        $data['patient_id'] =$patientId;
 
-        return redirect()
-            ->route('appointment.index')
-            ->with('success', 'Agendamento cadastrado com sucesso!!')
+        // 4. Cria e retorna o agendamento
+        return Appointment::create(\$data);
     }
 
     public function cancel(User $user, Appointment $appointment)
